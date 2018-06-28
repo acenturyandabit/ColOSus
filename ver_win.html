@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="common.css">
+		<link rel="stylesheet" type="text/css" href="win/window.css">
+		<link rel="stylesheet" type="text/css" href="win/taskbar.css">
+		<script src="jquery.min.js"></script>
+		<script src="win/dwm.js"></script>
+		</head>
+	<body>
+		<div id="desktop">
+		
+		
+		
+		</div>
+		<div id="taskbar">
+			<img src="win/charm.jpg" onclick="showStartMenu()" ></img>
+			<!-- list out the windows here-->
+			<span id="winlist"></span>
+			
+			<!-- also list out users-->
+			<span id="userlist"></span>
+			<!-- on the left hand side, list out saved views-->
+			<span id="viewlist"></span>
+			<!-- show time as well, make it full screen supportable?-->
+		</div>
+		<div id="startMenu">
+			<button onclick="makeWindow()">Make new window</button>
+			
+		</div>
+		
+		<div id="proto">
+			<div class="window">
+				<div class="titlebar">NAME OF WINDOW</div>
+				
+			</div>
+		</div>
+		
+	</body>
+	
+</html>
