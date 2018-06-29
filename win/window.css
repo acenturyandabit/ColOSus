@@ -6,14 +6,35 @@
 	overflow:auto;
 	border: 1px solid black;
 	background-color: white;
+	display: flex;
+	flex-direction:column;
+	padding-bottom:10px;
+}
+
+
+.ubox{
+	position:absolute;
+	width:400;
+	height:800;
+	border: 1px solid black;
 	
+}
+
+.window.focused>.titlebar{
+	background: blue;
 }
 
 .titlebar{
 	width:100%;
 	height:15px;
-	background: blue;
+	background: grey;
 	overflow:hidden;
 	color:white;
 	user-select:none;
+}
+
+.window>textarea{
+	resize:none;
+	width:100%;
+	height: 100%;
 }

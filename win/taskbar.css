@@ -9,6 +9,12 @@
 	
 }
 
+#taskbar>div{
+	display:flex;
+	padding-left:20px;
+	flex-direction: row;
+	background-color:#030303;
+}
 
 #taskbar>img{
 	width:40px;
@@ -23,4 +29,9 @@
 	bottom:40px;
 	background:black;
 	display:none;
+}
+
+.barItem.focused{
+	border-bottom: blue solid 5px;
+	
 }
