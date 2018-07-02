@@ -5,12 +5,11 @@
 		<link rel="stylesheet" type="text/css" href="win/taskbar.css">
 		<script src="jquery.min.js"></script>
 		<script src="win/dwm.js"></script>
-		</head>
+	</head>
 	<body>
 		<div id="desktop">
-		
-		
-		
+			
+			
 		</div>
 		<div id="taskbar">
 			<img src="win/charm.jpg" onclick="showStartMenu()" ></img>
@@ -18,20 +17,31 @@
 			<div id="winlist"></div>
 			
 			<!-- also list out users-->
-			<span id="userlist"></span>
+			<div id="userlist"></div>
 			<!-- on the left hand side, list out saved views-->
-			<span id="viewlist"></span>
+			<div id="viewlist"></div>
 			<!-- show time as well, make it full screen supportable?-->
 		</div>
 		<div id="startMenu">
-			<button onclick="makeWindow()">Make new window</button>
+			<div id="sMcontainer">
+				<div id="sMsideBar">
+					<div></div>
+					<img src="win/user.jpg"></img>
+					<img src="win/settings.jpg"></img>
+				</div>
+				<div id="sMapps">
+					<button onclick="makeWindow()">Make new window</button>
+					<input id="wndSourceText" type="text" value="http://google.com.au" placeholder="Enter URL here..."></input>
+				</div>
+			</div>
+			
 			
 		</div>
 		
 		<div id="proto">
 			<div class="window">
-				<div class="titlebar">NAME OF WINDOW</div>
-				<textarea></textarea>
+				<div class="titlebar">NAME OF WINDOW<div>X</div></div>
+				<iframe></iframe>
 			</div>
 			<div class="uBox">
 				user_23849273
@@ -42,8 +52,24 @@
 			<div class="usr_barItem barItem">
 				<img src="win/user.jpg"></img>
 			</div>
+			
+			<!-- settings window is special -->
+			<div id="settingswnd" class="window keepOpen">
+				<div class="titlebar">Settings</div>
+				<link rel="stylesheet" type="text/css" href="win/settings.css">
+				<div>
+					<div>
+						<span>Connection</span>
+						<br>
+						<span>UI</span>
+					</div>
+				</div>
+			</div>
+			
+			
+			
 		</div>
 		
-	</body>
-	
-</html>
+			</body>
+			
+		</html>		

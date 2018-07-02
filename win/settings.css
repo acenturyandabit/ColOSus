@@ -1,0 +1,10 @@
+#settingswnd>div:last-child{
+	display: flex;
+	flex-direction:row;
+}
+
+#settingswnd>div:last-child>div:first-child{
+	overflow-y: auto;
+	background-color:black;
+	color:white;
+}

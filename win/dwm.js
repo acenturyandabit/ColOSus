@@ -16,8 +16,22 @@ $(document).ready(()=>{
 	
 	
 	
+	//initially associate all predefined windows
+	$("#desktop>.window").each((i,e)=>{
+		e.children[0].addEventListener("mousedown",moveStart);
+		e.children[0].children[0].addEventListener("mousedown",closeWnd);
+		e.addEventListener("mousedown",focusWnd);
+		/*
+		// Create the taskbar icon - not done because we're hiding them soon anyways
+		newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
+		newIco.id="i_"+e.id;
+		$("#winlist").append(newIco);
+		newIco.addEventListener("click",wndIconClick);
+		*/
+	});
 	
-	
+	//hide every initial window
+	$("#desktop>.window").hide();	
 	
 	///debugging
 	//newUser();
@@ -74,6 +88,18 @@ function wndIconClick(e){
 
 ////////
 
+function closeWnd(e){
+	var opWnd=e.currentTarget.parentElement.parentElement;
+	var wid=opWnd.id;
+	//for an ordinary window:
+	//detach window from DOM
+	opWnd.remove();
+	//detach taskbar icon from DOM
+	var tbIt=$("#i_"+wid)[0];
+	tbIt.remove();
+	e.stopImmediatePropagation();
+}
+
 
 function makeWindow(){
 	// Create the window div
@@ -81,8 +107,12 @@ function makeWindow(){
 	newWnd.id=gen_uid();
 	$("#desktop").append(newWnd);
 	newWnd.children[0].addEventListener("mousedown",moveStart);
+	newWnd.children[0].children[0].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
-	newWnd.classList.add("focused");
+	
+	
+	//load in the iframe
+	newWnd.children[1].src=$("#wndSourceText")[0].value;
 	
 	// Create the taskbar icon
 	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
@@ -93,6 +123,7 @@ function makeWindow(){
 	
 	
 	focusWnd(newWnd);
+	
 	$("#startMenu").hide();
 }
 

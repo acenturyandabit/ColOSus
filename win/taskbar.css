@@ -28,7 +28,26 @@
 	height: 300px;
 	bottom:40px;
 	background:black;
-	display:none;
+	/*display:none;*/
+}
+
+#sMcontainer{
+	display:flex;
+	flex-direction:row;
+}
+
+#sMsideBar{
+	display:flex;
+	flex-direction:column;
+	height: 100%;
+}
+#sMsideBar>div{
+	flex: 0 1 100%;
+}
+
+#sMsideBar>img{
+	flex: 1 0 40px;
+	width:40px;
 }
 
 .barItem.focused{
