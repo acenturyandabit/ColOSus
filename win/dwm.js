@@ -34,6 +34,7 @@ $(document).ready(()=>{
 	$("#desktop>.window").hide();	
 	
 	///debugging
+	init ("testing");
 	//newUser();
 });
 /////MOVING WINDOWS AROUND
@@ -52,6 +53,14 @@ function moveCont(e){
 	if (moving){
 		movTarg.style.left=(e.pageX-movTarg.dataset.delX)+"px";
 		movTarg.style.top=(e.pageY-movTarg.dataset.delY)+"px";
+		var updateData={
+			id: movTarg.id,
+			top: movTarg.style.top,
+			left: movTarg.style.left,
+			width: movTarg.style.width,
+			height: movTarg.style.height,
+		}
+		remoteUpdateWindow(updateData);
 	}
 }
 function moveEnd(e){
@@ -68,15 +77,33 @@ function defocus_all(){
 }
 
 function focusWnd(e){
-	
-	if (e.currentTarget){
+	try{
 		e.stopImmediatePropagation();
 		e=e.currentTarget;
+	}catch (err){
 	}
 	defocus_all();
 	e.classList.add("focused");
 	$("#i_"+e.id)[0].classList.add("focused");
-	
+	e.dataset.preW=e.style.width;
+	e.dataset.preH=e.style.height;
+}
+
+function checkResize(e){
+	if (e.currentTarget){
+		e.stopImmediatePropagation();
+		e=e.currentTarget;
+	}
+	if (e.style.height-e.dataset.preH!=0 || e.style.width-e.dataset.preW!=0){
+		var updateData={
+			id: e.id,
+			top: e.style.top,
+			left: e.style.left,
+			width: e.style.width,
+			height: e.style.height,
+		}
+		remoteUpdateWindow(updateData);
+	}
 }
 
 //////// taskbar
@@ -87,6 +114,47 @@ function wndIconClick(e){
 
 
 ////////
+
+
+
+////Remotes
+function remoteMakeWindow(data){
+	//Window was made by an external entity. Fill in details as provided.
+	var newWnd;
+	// data is a JSON object 
+	
+	newWnd=$("#proto>.window")[0].cloneNode(true);
+	newWnd.id=data.id;
+	$("#desktop").append(newWnd);
+	newWnd.children[0].addEventListener("mousedown",moveStart);
+	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
+	newWnd.addEventListener("mousedown",focusWnd);
+	newWnd.append(document.createElement("iframe"));
+	newWnd.children[1].src=data.data;
+	newWnd.style.top=data.top;
+	newWnd.style.left=data.left;
+	newWnd.style.width=data.width;
+	newWnd.style.height=data.height;
+	
+	
+	// Create the taskbar icon
+	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
+	newIco.id="i_"+newWnd.id;
+	$("#winlist").append(newIco);
+	newIco.addEventListener("click",wndIconClick);
+}
+
+function remoteWindowUpdated(data){
+	wnd=$("#"+data.id)[0];
+	wnd.style.top=data.top;
+	wnd.style.left=data.left;
+	wnd.style.width=data.width;
+	wnd.style.height=data.height;
+}
+
+////creating windows
+//byExt is true means this window was not made by the user
+
 
 function closeWnd(e){
 	var opWnd=e.currentTarget.parentElement.parentElement;
@@ -100,15 +168,7 @@ function closeWnd(e){
 	e.stopImmediatePropagation();
 }
 
-
-
-////special windows
-
-var swc=["settingswnd"]
-
-function makeWindow(name){
-	var newWnd;
-	
+function makeWindow(appname){
 	// Create the window div
 	newWnd=$("#proto>.window")[0].cloneNode(true);
 	newWnd.id=gen_uid();
@@ -117,16 +177,14 @@ function makeWindow(name){
 	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
 	
-	
-	if (swc.includes(name)){
-		newWnd.append($("#"+name)[0])
-		newWnd.children[0].children[0].innerText="Hello";
-	}else{
-		//load in the iframe
+	//Handle special windows
+	try{
+		newWnd.append($("#"+appname)[0]);
+		newWnd.children[0].children[0].innerText=$("#"+appname)[0].dataset.appname;
+	}catch (e){
 		newWnd.append(document.createElement("iframe"));
-		newWnd.children[1].src=$("#wndSourceText")[0].value;
+		newWnd.children[1].src=appname;
 	}
-	
 	
 	// Create the taskbar icon
 	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
@@ -134,11 +192,18 @@ function makeWindow(name){
 	$("#winlist").append(newIco);
 	newIco.addEventListener("click",wndIconClick);
 	//newIco.addEventListener("click",focusWindow);
-	
-	
 	focusWnd(newWnd);
-	
 	$("#startMenu").hide();
+	
+	//report to remote
+	var datapackage={};
+	datapackage.appname=appname;
+	datapackage.top=newWnd.style.top;
+	datapackage.left=newWnd.style.left;
+	datapackage.height=newWnd.style.height;
+	datapackage.width=newWnd.style.width;
+	datapackage.id=newWnd.id;
+	remoteNewWindow(datapackage);
 }
 
 ////USER STUFFS MANANAGEMENT

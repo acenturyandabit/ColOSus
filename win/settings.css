@@ -1,9 +1,10 @@
-#settingswnd>div:last-child{
+#settingswnd{
 	display: flex;
 	flex-direction:row;
 }
 
-#settingswnd>div:last-child>div:first-child{
+#settingswnd>div:nth-child(2){
+	flex: 0 0 80px;
 	overflow-y: auto;
 	background-color:black;
 	color:white;

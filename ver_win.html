@@ -1,10 +1,16 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="common.css">
+		
 		<link rel="stylesheet" type="text/css" href="win/window.css">
 		<link rel="stylesheet" type="text/css" href="win/taskbar.css">
 		<script src="jquery.min.js"></script>
+	<!--<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>-->
+		<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-database.js"></script>
+		<script src="firebase/comms.js"></script>
 		<script src="win/dwm.js"></script>
+		
 	</head>
 	<body>
 		<div id="desktop">
@@ -59,12 +65,32 @@
 			<div id="settingswnd" data-appname="Settings">
 				<link rel="stylesheet" type="text/css" href="win/settings.css">
 				<div>
+				<!--sidebar -->
 					<div>
 						<span>Connection</span>
 						<br>
 						<span>UI</span>
 					</div>
 				</div>
+				<!-- tabs -->
+				<div>
+					
+					<div>
+						<h2>Connection</h2>
+						<div>
+							<input type="radio" checked id="firebase" name="conntype" />
+							<label for="firebase">Firebase</label>
+							<input type="checkbox" checked id="fbDefault">
+							<label for="fbDefault">Use default client</label>
+							<div id="fbcustomdiv">
+								
+							</div>
+						</div>
+						<input type="radio" id="firebase" name="conntype" />
+						<label for="websock">WebSocket</label>
+					</div>
+				</div>
+				
 			</div>
 			
 			
