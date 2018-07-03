@@ -101,18 +101,32 @@ function closeWnd(e){
 }
 
 
-function makeWindow(){
+
+////special windows
+
+var swc=["settingswnd"]
+
+function makeWindow(name){
+	var newWnd;
+	
 	// Create the window div
 	newWnd=$("#proto>.window")[0].cloneNode(true);
 	newWnd.id=gen_uid();
 	$("#desktop").append(newWnd);
 	newWnd.children[0].addEventListener("mousedown",moveStart);
-	newWnd.children[0].children[0].addEventListener("mousedown",closeWnd);
+	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
 	
 	
-	//load in the iframe
-	newWnd.children[1].src=$("#wndSourceText")[0].value;
+	if (swc.includes(name)){
+		newWnd.append($("#"+name)[0])
+		newWnd.children[0].children[0].innerText="Hello";
+	}else{
+		//load in the iframe
+		newWnd.append(document.createElement("iframe"));
+		newWnd.children[1].src=$("#wndSourceText")[0].value;
+	}
+	
 	
 	// Create the taskbar icon
 	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
