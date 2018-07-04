@@ -13,9 +13,9 @@ $(document).ready(()=>{
 	$("body").on("mouseup",moveEnd);
 	$("body").on("mousedown",defocus_all);
 	$("body").on("mousemove",moveCont);
-	
-	
-	
+
+
+
 	//initially associate all predefined windows
 	$("#desktop>.window").each((i,e)=>{
 		e.children[0].addEventListener("mousedown",moveStart);
@@ -29,10 +29,10 @@ $(document).ready(()=>{
 		newIco.addEventListener("click",wndIconClick);
 		*/
 	});
-	
+
 	//hide every initial window
-	$("#desktop>.window").hide();	
-	
+	$("#desktop>.window").hide();
+
 	///debugging
 	init ("testing");
 	//newUser();
@@ -54,9 +54,8 @@ function moveCont(e){
 		movTarg.style.left=(e.pageX-movTarg.dataset.delX)+"px";
 		movTarg.style.top=(e.pageY-movTarg.dataset.delY)+"px";
 		var updateData={
-			id: movTarg.id,
-			top: movTarg.style.top,
-			left: movTarg.style.left,
+			uuid: movTarg.id,
+			pos: {y:movTarg.style.top, x:movTarg.style.left},
 			width: movTarg.style.width,
 			height: movTarg.style.height,
 		}
@@ -109,7 +108,7 @@ function checkResize(e){
 //////// taskbar
 function wndIconClick(e){
 	focusWnd($("#"+e.currentTarget.id.substring(2))[0]);
-	
+
 }
 
 
@@ -121,22 +120,22 @@ function wndIconClick(e){
 function remoteMakeWindow(data){
 	//Window was made by an external entity. Fill in details as provided.
 	var newWnd;
-	// data is a JSON object 
-	
+	// data is a JSON object
+
 	newWnd=$("#proto>.window")[0].cloneNode(true);
-	newWnd.id=data.id;
+	newWnd.id=data.uuid;
 	$("#desktop").append(newWnd);
 	newWnd.children[0].addEventListener("mousedown",moveStart);
 	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
 	newWnd.append(document.createElement("iframe"));
 	newWnd.children[1].src=data.src;
-	newWnd.style.top=data.top;
-	newWnd.style.left=data.left;
+	newWnd.style.top=data.pos.x;
+	newWnd.style.left=data.pos.y;
 	newWnd.style.width=data.width;
 	newWnd.style.height=data.height;
-	
-	
+
+
 	// Create the taskbar icon
 	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
 	newIco.id="i_"+newWnd.id;
@@ -145,9 +144,9 @@ function remoteMakeWindow(data){
 }
 
 function remoteWindowUpdated(data){
-	wnd=$("#"+data.id)[0];
-	wnd.style.top=data.top;
-	wnd.style.left=data.left;
+	wnd=$("#"+data.uuid)[0];
+	wnd.style.top=data.pos.x;
+	wnd.style.left=data.pos.y;
 	wnd.style.width=data.width;
 	wnd.style.height=data.height;
 }
@@ -164,7 +163,7 @@ function remoteCloseWnd(id){
 	//detach taskbar icon from DOM
 	var tbIt=$("#i_"+id)[0];
 	tbIt.remove();
-	
+
 }
 function closeWnd(e){
 	var opWnd=e.currentTarget.parentElement.parentElement;
@@ -179,15 +178,15 @@ function closeWnd(e){
 }
 
 function makeWindow(appname){
-	
-	
-	
+
+
+
 	//Forward the request to the server
 	remoteNewWindow(appname);
 }
 /*Old version:
-	
-	
+
+
 	// Create the window div
 	newWnd=$("#proto>.window")[0].cloneNode(true);
 	newWnd.id=gen_uid();
@@ -195,19 +194,19 @@ function makeWindow(appname){
 	newWnd.children[0].addEventListener("mousedown",moveStart);
 	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
-	
-	
-	
+
+
+
 	//Handle special windows
 	try{
 		newWnd.append($("#"+appname)[0]);
 		newWnd.children[0].children[0].innerText=$("#"+appname)[0].dataset.appname;
 	}catch (e){
-		
+
 		newWnd.append(document.createElement("iframe"));
 		newWnd.children[1].src=appname;
 	}
-	
+
 	// Create the taskbar icon
 	newIco=$("#proto>.wnd_barItem")[0].cloneNode(true);
 	newIco.id="i_"+newWnd.id;
@@ -216,7 +215,7 @@ function makeWindow(appname){
 	//newIco.addEventListener("click",focusWindow);
 	focusWnd(newWnd);
 	$("#startMenu").hide();
-	
+
 	//report to remote
 	var datapackage={};
 	datapackage.appname=appname;
@@ -230,19 +229,19 @@ function makeWindow(appname){
 */
 ////USER STUFFS MANANAGEMENT
 function newUser(){//create an external user. not called when self is created.
-	
+
 	//create new user box
 	newUBox=$("#proto>.uBox")[0].cloneNode(true);
 	newUBox.id=gen_uid();
 	$("#desktop").append(newUBox);
-	
-	
+
+
 	newIco=$("#proto>.usr_barItem")[0].cloneNode(true);
 	newIco.id="i_"+newUBox.id;
 	$("#winlist").append(newIco);
-	
-	
-	
+
+
+
 }
 
 
@@ -251,8 +250,8 @@ function newUser(){//create an external user. not called when self is created.
 // clicking the charm
 function showStartMenu(){
 	$("#startMenu").toggle();
-	
-	
+
+
 }
 
 
@@ -262,14 +261,14 @@ function showStartMenu(){
 
 //move viewport.
 
-//abstracted window content link? 
+//abstracted window content link?
 
 
 
 /*
 	//make dragging the view work.
-	
-	
+
+
 Poll a file storage to get a list of files
 Open up a text file.
 A little taskbar for each window: save, run
@@ -280,8 +279,8 @@ remember user data position?
 
 // detect which OS we're on and show the respective toolbar.
 
-AIM: 
-- to be able to literally code this from a web browser, and code it collaboratively. 
+AIM:
+- to be able to literally code this from a web browser, and code it collaboratively.
 - Javascript/html/css as a first language. cos y not
 
 

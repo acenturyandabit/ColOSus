@@ -1,12 +1,12 @@
 //api
 /*
 	Client calls:
-	
-	function init(sessionId); 
+
+	function init(sessionId);
 	[done]
 	Initialises the current workspace. If a workspace with an id 'sessionID' exists in the server, this loads all existing windows.
 	If there is no workspace with id 'sessionID', the server attempts to create a new workspace with id 'sessionID'.
-	
+
 	function remoteUpdateWindow(data);
 	data{
 		id,
@@ -15,7 +15,7 @@
 		width,
 		height
 	}
-	
+
 	function remoteNewWindow(data);
 	data{
 		id,
@@ -26,32 +26,32 @@
 		height
 	}
 	----
-	Calls to client: 
-	
+	Calls to client:
+
 	function remoteWindowUpdated(data);
-	
-	
+
+
 	function remoteMakeWindow(data);
-	
+
 	----
 	Calls from server:
 	window updated
 	window created
 	window get request response
-	---- 
+	----
 	Calls to server:
 	initialise websock
 	get actor code
 	send update
 	get all windows
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
 */
 
 
@@ -106,16 +106,16 @@ function initWorkspace(sessionID){
 				remoteWindowUpdated(updateContent.data);
 				break;
 		}
-		
-		
-		
+
+
+
 	});
-	
+
 }
 
 function connectDone(){
 	//Connect to an existing workspace
-	
+
 	//Generate a unique actor ID
 	sessionChunk.child("actorIDs").once("value",(data)=>{
 		var allActors=data.val().toString();
@@ -126,14 +126,14 @@ function connectDone(){
 		allActors=allActors+"|"+actorID;
 		sessionChunk.child("actorIDs").set(allActors);
 	});
-	
+
 	//Open all existing windows
 	wndChunk=sessionChunk.child("wnds");
 	wndChunk.once("value",(datasnapshot)=>{
 		datasnapshot.forEach(function (child){
 			var datapackage=JSON.parse(child.val());
 			datapackage.id=child.key;
-			
+
 			remoteMakeWindow(datapackage);
 		});
 	});
@@ -154,9 +154,9 @@ function connectDone(){
 				remoteCloseWnd(updateContent.id);
 				break;
 		}
-		
-		
-		
+
+
+
 	});
 
 }
@@ -185,7 +185,7 @@ function remoteUpdateWindow(data){
 	};
 	var strOut = JSON.stringify(updateContent);
 	sessionChunk.child("updates").set(strOut);
-	
+
 	//also update the static window register
 	var staticContent={};
 	var newkey=data.id;
@@ -203,7 +203,7 @@ function remoteCloseWindow(data){
 	};
 	var strOut = JSON.stringify(updateContent);
 	sessionChunk.child("updates").set(strOut);
-	
+
 	//also update the static window register
 	sessionChunk.child("wnds").child(data.id).remove();
 }
