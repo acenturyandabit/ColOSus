@@ -150,6 +150,9 @@ function connectDone(){
 			case "updateWnd":
 				remoteWindowUpdated(updateContent.data);
 				break;
+			case "closeWnd":
+				remoteCloseWnd(updateContent.id);
+				break;
 		}
 		
 		
@@ -189,4 +192,18 @@ function remoteUpdateWindow(data){
 	delete data.id;
 	staticContent[newkey]=JSON.stringify(data);
 	sessionChunk.child("wnds").update(staticContent);
+}
+
+
+function remoteCloseWindow(data){
+	var updateContent={
+		type: "closeWnd",
+		id: id,
+		actor: actorID
+	};
+	var strOut = JSON.stringify(updateContent);
+	sessionChunk.child("updates").set(strOut);
+	
+	//also update the static window register
+	sessionChunk.child("wnds").child(data.id).remove();
 }

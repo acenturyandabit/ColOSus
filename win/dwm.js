@@ -156,6 +156,16 @@ function remoteWindowUpdated(data){
 //byExt is true means this window was not made by the user
 
 
+function remoteCloseWnd(id){
+	//for an ordinary window:
+	//detach window from DOM
+	$("#"+id)[0].remove();
+	opWnd.remove();
+	//detach taskbar icon from DOM
+	var tbIt=$("#i_"+id)[0];
+	tbIt.remove();
+	
+}
 function closeWnd(e){
 	var opWnd=e.currentTarget.parentElement.parentElement;
 	var wid=opWnd.id;
@@ -169,6 +179,14 @@ function closeWnd(e){
 }
 
 function makeWindow(appname){
+	
+	
+	
+	//Forward the request to the server
+	
+	
+	
+	
 	// Create the window div
 	newWnd=$("#proto>.window")[0].cloneNode(true);
 	newWnd.id=gen_uid();

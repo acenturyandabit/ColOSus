@@ -1,0 +1,55 @@
+//api
+/*
+	Client calls:
+	
+	function init(sessionId); 
+	[done]
+	Initialises the current workspace. If a workspace with an id 'sessionID' exists in the server, this loads all existing windows.
+	If there is no workspace with id 'sessionID', the server attempts to create a new workspace with id 'sessionID'.
+	
+	function remoteUpdateWindow(data);
+	data{
+		id,
+		top,
+		left,
+		width,
+		height
+	}
+	
+	function remoteNewWindow(data);
+	data{
+		id,
+		data, (iframe data)
+		top,
+		left,
+		width,
+		height
+	}
+	----
+	Calls to client: 
+	
+	function remoteWindowUpdated(data);
+	
+	
+	function remoteMakeWindow(data);
+	
+	----
+	Calls from server:
+	window updated
+	window created
+	window get request response
+	---- 
+	Calls to server:
+	initialise websock
+	get actor code
+	send update
+	get all windows
+	
+	
+	
+	
+	
+	
+	
+	
+*/
