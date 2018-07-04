@@ -130,7 +130,7 @@ function remoteMakeWindow(data){
 	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
 	newWnd.append(document.createElement("iframe"));
-	newWnd.children[1].src=data.data;
+	newWnd.children[1].src=data.src;
 	newWnd.style.top=data.top;
 	newWnd.style.left=data.left;
 	newWnd.style.width=data.width;
@@ -183,8 +183,9 @@ function makeWindow(appname){
 	
 	
 	//Forward the request to the server
-	
-	
+	remoteNewWindow(appname);
+}
+/*Old version:
 	
 	
 	// Create the window div
@@ -195,11 +196,14 @@ function makeWindow(appname){
 	newWnd.children[0].children[1].addEventListener("mousedown",closeWnd);
 	newWnd.addEventListener("mousedown",focusWnd);
 	
+	
+	
 	//Handle special windows
 	try{
 		newWnd.append($("#"+appname)[0]);
 		newWnd.children[0].children[0].innerText=$("#"+appname)[0].dataset.appname;
 	}catch (e){
+		
 		newWnd.append(document.createElement("iframe"));
 		newWnd.children[1].src=appname;
 	}
@@ -223,7 +227,7 @@ function makeWindow(appname){
 	datapackage.id=newWnd.id;
 	remoteNewWindow(datapackage);
 }
-
+*/
 ////USER STUFFS MANANAGEMENT
 function newUser(){//create an external user. not called when self is created.
 	

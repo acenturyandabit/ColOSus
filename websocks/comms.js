@@ -109,6 +109,18 @@ socketHandles["getAllWnd"]=(data)=>{
 	
 */
 
+socketHandles["newWnd"]=(data)=>{
+	remoteMakeWindow(data);
+}
+
+function remoteNewWindow(data){
+	var updateContent={
+		type: "newWnd",
+		actor: actorID
+	};
+	updateContent=Object.assign(data,updateContent);
+	socket.send(JSON.stringify(updateContent)); 
+}
 
 /*
 	updateWnd: Client calls this when moving a window.
@@ -137,6 +149,20 @@ socketHandles["getAllWnd"]=(data)=>{
 	
 */
 
+socketHandles["updateWnd"]=(data)=>{
+	remoteWindowUpdated(data);
+}
+
+function remoteUpdateWindow(data){
+	var updateContent={
+		type: "updateWnd",
+		actor: actorID
+	};
+	updateContent=Object.assign(data,updateContent);
+	socket.send(JSON.stringify(updateContent)); 
+	
+	
+}
 
 /*
 	closeWnd: Client calls this when closing a window.
@@ -157,102 +183,6 @@ socketHandles["getAllWnd"]=(data)=>{
 	
 */
 
-function initWorkspace(sessionID){
-	var workspaceObject={};
-	workspaceObject[sessionID]={
-		wnds:{},
-		updates:"",
-		actorIDs:makeActorID()
-	}
-	firebase.database().ref().update(workspaceObject);
-	sessionChunk=firebase.database().ref(sessionID);
-	//start listening for updates
-	updates=sessionChunk.child("updates");
-	updates.on("value",(datasnapshot)=>{
-		var updateContent=JSON.parse(datasnapshot.val());
-		if (updateContent.actor==actorID)return;
-		//dont handle own updates
-		switch (updateContent.type){
-			case "newWnd":
-				remoteMakeWindow(updateContent.data);
-				break;
-			case "updateWnd":
-				remoteWindowUpdated(updateContent.data);
-				break;
-		}
-		
-		
-		
-	});
-	
-}
 
-function connectDone(){
-	//Connect to an existing workspace
-	
-	//Generate a unique actor ID
-	sessionChunk.child("actorIDs").once("value",(data)=>{
-		var allActors=data.val().toString();
-		var actorList=allActors.split("|");
-		do{
-			actorID=makeActorID();
-		}while (actorList.includes(actorID));
-		allActors=allActors+"|"+actorID;
-		sessionChunk.child("actorIDs").set(allActors);
-	});
-	
-	//Open all existing windows
-	wndChunk=sessionChunk.child("wnds");
-	//start listening for updates
-	updates=sessionChunk.child("updates");
-	updates.on("value",(datasnapshot)=>{
-		var updateContent=JSON.parse(datasnapshot.val());
-		if (updateContent.actor==actorID)return;
-		//dont handle own updates
-		switch (updateContent.type){
-			case "newWnd":
-				remoteMakeWindow(updateContent.data);
-				break;
-			case "updateWnd":
-				remoteWindowUpdated(updateContent.data);
-				break;
-		}
-		
-		
-		
-	});
 
-}
 
-function remoteNewWindow(data){
-	var updateContent={
-		type: "newWnd",
-		data: data,
-		actor: actorID
-	};
-	var strOut = JSON.stringify(updateContent);
-	sessionChunk.child("updates").set(strOut);
-	//also update the static window register
-	var staticContent={};
-	var newkey=data.id;
-	delete data.id;
-	staticContent[newkey]=JSON.stringify(data);
-	sessionChunk.child("wnds").update(staticContent);
-}
-
-function remoteUpdateWindow(data){
-	var updateContent={
-		type: "updateWnd",
-		data: data,
-		actor: actorID
-	};
-	var strOut = JSON.stringify(updateContent);
-	sessionChunk.child("updates").set(strOut);
-	
-	//also update the static window register
-	var staticContent={};
-	var newkey=data.id;
-	delete data.id;
-	staticContent[newkey]=JSON.stringify(data);
-	sessionChunk.child("wnds").update(staticContent);
-}
