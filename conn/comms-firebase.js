@@ -1,58 +1,3 @@
-//api
-/*
-	Client calls:
-
-	function init(sessionId);
-	[done]
-	Initialises the current workspace. If a workspace with an id 'sessionID' exists in the server, this loads all existing windows.
-	If there is no workspace with id 'sessionID', the server attempts to create a new workspace with id 'sessionID'.
-
-	function remoteUpdateWindow(data);
-	data{
-		id,
-		top,
-		left,
-		width,
-		height
-	}
-
-	function remoteNewWindow(data);
-	data{
-		id,
-		data, (iframe data)
-		top,
-		left,
-		width,
-		height
-	}
-	----
-	Calls to client:
-
-	function remoteWindowUpdated(data);
-
-
-	function remoteMakeWindow(data);
-
-	----
-	Calls from server:
-	window updated
-	window created
-	window get request response
-	----
-	Calls to server:
-	initialise websock
-	get actor code
-	send update
-	get all windows
-
-
-
-
-
-
-
-
-*/
 
 
 function makeActorID(){
@@ -60,15 +5,8 @@ function makeActorID(){
 }
 
 // Initialize Firebase
-var config = {
-    apiKey: "AIzaSyDrIrnW3iawiKKp-lkPQlVfQCRc3aLohkw",
-    authDomain: "colosus-e2eca.firebaseapp.com",
-    databaseURL: "https://colosus-e2eca.firebaseio.com",
-    projectId: "colosus-e2eca",
-    storageBucket: "colosus-e2eca.appspot.com",
-    messagingSenderId: "182351007208"
-};
-firebase.initializeApp(config);
+
+firebase.initializeApp(fbConfig);
 
 var actorID;
 var sessionChunk;
@@ -82,7 +20,7 @@ function init(sessionID){
 		}
 	});
 }
-
+init(fbConnItem);
 function initWorkspace(sessionID){
 	var workspaceObject={};
 	workspaceObject[sessionID]={
@@ -93,26 +31,31 @@ function initWorkspace(sessionID){
 	firebase.database().ref().update(workspaceObject);
 	sessionChunk=firebase.database().ref(sessionID);
 	//start listening for updates
-	updates=sessionChunk.child("updates");
-	updates.on("value",(datasnapshot)=>{
-		var updateContent=JSON.parse(datasnapshot.val());
-		if (updateContent.actor==actorID)return;
-		//dont handle own updates
-		switch (updateContent.type){
-			case "newWnd":
-				remoteMakeWindow(updateContent.data);
-				break;
-			case "updateWnd":
-				remoteWindowUpdated(updateContent.data);
-				break;
-		}
-
-
-
-	});
+	registerUpdateListener();
 
 }
-
+function registerUpdateListener(){
+	updates=sessionChunk.child("updates");
+	updates.on("value",(datasnapshot)=>{
+		if (datasnapshot.val().length>0){
+			var updateContent=JSON.parse(datasnapshot.val());
+			//dont handle own updates
+			switch (updateContent.type){
+				case "newWnd":
+					remoteMakeWindow(updateContent.data);
+					break;
+				case "updateWnd":
+					if (updateContent.actor==actorID)return;
+					remoteWindowUpdated(updateContent.data);
+					break;
+				case "closeWnd":
+					if (updateContent.actor==actorID)return;
+					remoteCloseWnd(updateContent.id);
+					break;
+			}
+		}
+	});
+}
 function connectDone(){
 	//Connect to an existing workspace
 
@@ -138,27 +81,7 @@ function connectDone(){
 		});
 	});
 	//start listening for updates
-	updates=sessionChunk.child("updates");
-	updates.on("value",(datasnapshot)=>{
-		var updateContent=JSON.parse(datasnapshot.val());
-		if (updateContent.actor==actorID)return;
-		//dont handle own updates
-		switch (updateContent.type){
-			case "newWnd":
-				remoteMakeWindow(updateContent.data);
-				break;
-			case "updateWnd":
-				remoteWindowUpdated(updateContent.data);
-				break;
-			case "closeWnd":
-				remoteCloseWnd(updateContent.id);
-				break;
-		}
-
-
-
-	});
-
+	registerUpdateListener();
 }
 
 function remoteNewWindow(data){
